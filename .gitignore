@@ -1,10 +1,11 @@
+### Maven ###
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### STS ###
+### STS / Eclipse ###
 .apt_generated
 .classpath
 .factorypath
@@ -32,17 +33,14 @@ build/
 ### VS Code ###
 .vscode/
 
-# Build output
-target/
+### macOS ###
+.DS_Store
 
-# IntelliJ files
-.idea/
-*.iml
-
-# Secrets and local config (never commit these)
+### Secrets and local config (never commit these) ###
 src/main/resources/application.properties
 .env
 
-# Local databases and logs
+### Local databases and logs ###
+data/
 *.mv.db
 *.log
