@@ -169,13 +169,6 @@ PUT /api/reviews/1
 - Comentário: até 200 caracteres
 - Nome: 3–40 caracteres · Palavra-passe: 8–20 caracteres
 
-## Roadmap
-
-- [ ] Frontend em React + Shadcn UI
-- [ ] Testes unitários e de integração
-- [ ] Migrar de H2 para uma base de dados persistente (PostgreSQL)
-- [ ] Global exception handler que devolva `ApiError`
-
 ## Autor
 
 **Edson** — [netchitchiofc@gmail.com](mailto:netchitchiofc@gmail.com)
