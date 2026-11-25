@@ -1,53 +1,51 @@
 # Restaurant Review API
 
-A REST API built with **Spring Boot** where users can register, log in, add restaurants and review them based on how well they handle food allergies (peanut, egg and dairy). Reviews are moderated by an admin before they count towards a restaurant's scores.
-
-> 🇵🇹 **Resumo:** API REST em Spring Boot para avaliar restaurantes consoante o cuidado com alergias (amendoim, ovo, lacticínios). Autenticação com JWT; as avaliações têm de ser aprovadas por um administrador.
+API REST desenvolvida com **Spring Boot** onde os utilizadores podem registar-se, iniciar sessão, adicionar restaurantes e avaliá-los consoante o cuidado com alergias alimentares (amendoim, ovo e lacticínios). As avaliações são moderadas por um administrador antes de contarem para as pontuações de um restaurante.
 
 ---
 
-## Features / Funcionalidades
+## Funcionalidades
 
-- User registration and login with **JWT** authentication (stateless)
-- Passwords hashed with **BCrypt**
-- Roles: `USER` and `ADMIN`
-- Users can set their city, zip code and allergy interests
-- Add restaurants and look them up by name + zip code
-- Submit reviews (scores 1–5 for peanut, egg and dairy + optional comment)
-- Admin approves or rejects pending reviews
-- Restaurant scores are recalculated from **accepted** reviews only
-- Search restaurants in a zip code ranked by allergy score
+- Registo e login de utilizadores com autenticação **JWT** (stateless)
+- Palavras-passe com hashing **BCrypt**
+- Papéis: `USER` e `ADMIN`
+- Os utilizadores podem definir a cidade, o código postal e os seus interesses em alergias
+- Adicionar restaurantes e pesquisá-los por nome + código postal
+- Submeter avaliações (pontuações de 1 a 5 para amendoim, ovo e lacticínios + comentário opcional)
+- O administrador aprova ou rejeita avaliações pendentes
+- As pontuações dos restaurantes são recalculadas apenas a partir das avaliações **aceites**
+- Pesquisa de restaurantes num código postal, ordenados por pontuação de alergia
 
-## Tech stack
+## Stack tecnológica
 
-| Area | Technology |
+| Área | Tecnologia |
 |------|------------|
-| Language | Java 17+ |
+| Linguagem | Java 17+ |
 | Framework | Spring Boot (Web, Data JPA, Validation, Security) |
-| Auth | JWT (`com.auth0:java-jwt`) |
-| Database | H2 (development) |
+| Autenticação | JWT (`com.auth0:java-jwt`) |
+| Base de dados | H2 (desenvolvimento) |
 | Boilerplate | Lombok |
 | Build | Maven |
 
-## Project structure
+## Estrutura do projeto
 
 ```
 src/main/java/com/netchitchi/dining
-├── DiningApplication.java      # Entry point
-├── config/                     # SecurityConfig (rules, CORS, password encoder)
-├── controller/                 # HTTP layer: receives requests, returns responses
-├── dto/                        # Request/response objects (what goes in/out of the API)
-├── model/                      # JPA entities + enums (database tables)
-├── repository/                 # Spring Data JPA interfaces
+├── DiningApplication.java      # Ponto de entrada
+├── config/                     # SecurityConfig (regras, CORS, password encoder)
+├── controller/                 # Camada HTTP: recebe pedidos, devolve respostas
+├── dto/                        # Objetos de pedido/resposta (o que entra/sai da API)
+├── model/                      # Entidades JPA + enums (tabelas da base de dados)
+├── repository/                 # Interfaces Spring Data JPA
 ├── security/                   # JwtFilter + TokenService
-└── service/                    # Business logic
+└── service/                    # Lógica de negócio
 ```
 
-**Request flow:** `Controller → Service → Repository → Database`. DTOs are used at the edges so entities (e.g. the password hash) are never exposed.
+**Fluxo de um pedido:** `Controller → Service → Repository → Base de dados`. Os DTOs são usados nas fronteiras da API para que as entidades (por exemplo, o hash da palavra-passe) nunca sejam expostas.
 
-## Getting started
+## Como começar
 
-### Clone the project
+### Clonar o projeto
 
 ```bash
 git clone https://github.com/<your-username>/restaurant-review.git
@@ -55,83 +53,83 @@ cd restaurant-review
 cp src/main/resources/application-example.properties src/main/resources/application.properties
 ```
 
-### Prerequisites
+### Pré-requisitos
 
-- JDK 17 or newer
-- Maven (or use the included `mvnw` wrapper)
+- JDK 17 ou superior
+- Maven (ou o wrapper `mvnw` incluído)
 
-### Configuration
+### Configuração
 
-Create `src/main/resources/application.properties` (this file is **not** committed — see `.gitignore`). Use `application-example.properties` as a template:
+Cria o ficheiro `src/main/resources/application.properties` (este ficheiro **não** é commitado — vê o `.gitignore`). Usa o `application-example.properties` como modelo:
 
 ```properties
 spring.datasource.url=jdbc:h2:mem:diningdb
 spring.jpa.hibernate.ddl-auto=update
 spring.h2.console.enabled=true
 
-# Secret used to sign JWTs. Use a long random value and NEVER commit the real one.
+# Segredo usado para assinar os JWTs. Usa um valor aleatório e longo e NUNCA faças commit do valor real.
 api.security.token.secret=${JWT_SECRET:change-me-to-a-long-random-string}
 
-# Frontend origin allowed by CORS
+# Origem do frontend permitida pelo CORS
 app.cors.allowed-origin=http://localhost:5173
 ```
 
-### Run
+### Executar
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-The API starts on `http://localhost:8080`.
+A API arranca em `http://localhost:8080`.
 
-## Authentication
+## Autenticação
 
-1. Register: `POST /api/auth/register`
-2. Log in: `POST /api/auth/login` → returns a token
-3. Send the token on every protected request:
+1. Registo: `POST /api/auth/register`
+2. Login: `POST /api/auth/login` → devolve um token
+3. Envia o token em todos os pedidos protegidos:
 
 ```
 Authorization: Bearer <your-token>
 ```
 
-Tokens expire after **2 hours**.
+Os tokens expiram ao fim de **2 horas**.
 
-## API endpoints
+## Endpoints da API
 
-### Auth (public)
+### Auth (público)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/register` | Create an account |
-| POST | `/api/auth/login` | Log in and receive a JWT |
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| POST | `/api/auth/register` | Criar uma conta |
+| POST | `/api/auth/login` | Iniciar sessão e receber um JWT |
 
-### Users (authenticated)
+### Utilizadores (autenticado)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/users/me` | Get my profile |
-| PUT | `/api/users/updateUser/me` | Update my city, zip code and allergy interests |
-| GET | `/api/users/users` | List all users (admin) |
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| GET | `/api/users/me` | Obter o meu perfil |
+| PUT | `/api/users/updateUser/me` | Atualizar a minha cidade, código postal e interesses em alergias |
+| GET | `/api/users/users` | Listar todos os utilizadores (admin) |
 
-### Restaurants (authenticated)
+### Restaurantes (autenticado)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/restaurants/new` | Add a restaurant |
-| GET | `/api/restaurants/details?name=&zipCode=` | Get one restaurant |
-| GET | `/api/restaurants/search?zipCode=&allergy=` | Rank restaurants by `peanut`, `egg` or `dairy` score |
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| POST | `/api/restaurants/new` | Adicionar um restaurante |
+| GET | `/api/restaurants/details?name=&zipCode=` | Obter um restaurante |
+| GET | `/api/restaurants/search?zipCode=&allergy=` | Ordenar restaurantes pela pontuação de `peanut`, `egg` ou `dairy` |
 
-### Reviews (authenticated)
+### Avaliações (autenticado)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/reviews/addReview` | Submit a review (starts as `PENDING`) |
-| GET | `/api/reviews/pendingReviews` | List pending reviews (admin) |
-| PUT | `/api/reviews/{id}` | Accept or reject a review (admin) |
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| POST | `/api/reviews/addReview` | Submeter uma avaliação (começa como `PENDING`) |
+| GET | `/api/reviews/pendingReviews` | Listar avaliações pendentes (admin) |
+| PUT | `/api/reviews/{id}` | Aceitar ou rejeitar uma avaliação (admin) |
 
-### Example requests
+### Exemplos de pedidos
 
-**Register**
+**Registo**
 ```json
 POST /api/auth/register
 {
@@ -146,7 +144,7 @@ POST /api/auth/register
 }
 ```
 
-**Add a review**
+**Adicionar uma avaliação**
 ```json
 POST /api/reviews/addReview
 {
@@ -158,26 +156,26 @@ POST /api/reviews/addReview
 }
 ```
 
-**Approve a review (admin)**
+**Aprovar uma avaliação (admin)**
 ```json
 PUT /api/reviews/1
 { "acceptedReview": true }
 ```
 
-## Validation rules
+## Regras de validação
 
-- Zip code format: `1000-001`
-- Scores: integers from 1 to 5
-- Comment: up to 200 characters
-- Name: 3–40 characters · Password: 8–20 characters
+- Formato do código postal: `1000-001`
+- Pontuações: números inteiros de 1 a 5
+- Comentário: até 200 caracteres
+- Nome: 3–40 caracteres · Palavra-passe: 8–20 caracteres
 
 ## Roadmap
 
-- [ ] React + Shadcn UI frontend
-- [ ] Unit and integration tests
-- [ ] Switch from H2 to a persistent database (PostgreSQL)
-- [ ] Global exception handler returning `ApiError`
+- [ ] Frontend em React + Shadcn UI
+- [ ] Testes unitários e de integração
+- [ ] Migrar de H2 para uma base de dados persistente (PostgreSQL)
+- [ ] Global exception handler que devolva `ApiError`
 
-## Author
+## Autor
 
 **Edson** — [netchitchiofc@gmail.com](mailto:netchitchiofc@gmail.com)
